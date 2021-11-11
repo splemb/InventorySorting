@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public class ItemManagementSystem : MonoBehaviour
 {
     [SerializeField]
-    List<Item> fullItemList = new List<Item>();
+    public List<Item> fullItemList = new List<Item>();
     [SerializeField]
-    List<Item> inventoryItemList = new List<Item>();
+    public List<Item> inventoryItemList = new List<Item>();
 
     [SerializeField]
     GameObject itemPrefab;
@@ -32,6 +32,7 @@ public class ItemManagementSystem : MonoBehaviour
 	{
         fullItemList.Add(new Item("Axe", 3.0f));
         fullItemList.Add(new Item("Bandage", 0.4f));
+        fullItemList.Add(new Item("Cheese Wheel", 1f));
         fullItemList.Add(new Item("Crossbow", 4.0f));
         fullItemList.Add(new Item("Dagger", 0.8f));
         fullItemList.Add(new Item("Emerald", 0.2f));
@@ -40,6 +41,12 @@ public class ItemManagementSystem : MonoBehaviour
         fullItemList.Add(new Item("Hat", 0.6f));
         fullItemList.Add(new Item("Ingot", 5.0f));
         fullItemList.Add(new Item("Junk", 1.2f));
+        fullItemList.Add(new Item("Map", 0.1f));
+        fullItemList.Add(new Item("Potion", 0.5f));
+        fullItemList.Add(new Item("Sandwich", 0.2f));
+        fullItemList.Add(new Item("Sword", 3.5f));
+
+
     }
 
     void InitialiseFullItemList()
@@ -55,7 +62,7 @@ public class ItemManagementSystem : MonoBehaviour
         }
 	}
 
-    void InitialiseInventoryItemList()
+    public void InitialiseInventoryItemList()
     {
         ClearInventoryItemList();
         GameObject gameObject;
@@ -69,18 +76,21 @@ public class ItemManagementSystem : MonoBehaviour
         }
     }
 
-    void ClearInventoryItemList()
+    public void ClearInventoryItemList()
 	{
         foreach(Transform child in inventoryTransform)
         {
             GameObject.Destroy(child.gameObject);
         }
+
+        
     }
 
     void ItemClicked(int index)
 	{
         Debug.Log("Item Cicked: " + index +". " + fullItemList[index].Name + " (" + fullItemList[index].Weight + ")");
         AddItemToInventory(index);
+        InitialiseInventoryItemList();
 
     }
 
@@ -89,12 +99,12 @@ public class ItemManagementSystem : MonoBehaviour
         Debug.Log("Item Cicked: " + index + ". " + inventoryItemList[index].Name + " (" + inventoryItemList[index].Weight + ")");
     }
 
-    void AddItemToInventory(int index)
+    public void AddItemToInventory(int index)
 	{
         Item item = new Item(fullItemList[index].Name, fullItemList[index].Weight);
         inventoryItemList.Add(item);
 
-        InitialiseInventoryItemList();
+        //InitialiseInventoryItemList();
     }
 }
 
