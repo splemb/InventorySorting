@@ -12,6 +12,8 @@ public class SortManager : MonoBehaviour
     float startTime;
     [SerializeField] bool version2;
 
+    bool sortingByWeight = false;
+
     void StartTimer()
     {
         startTime = Time.realtimeSinceStartup;
@@ -27,6 +29,8 @@ public class SortManager : MonoBehaviour
     public void SortByName(bool version2 = false)
     {
         StartTimer();
+
+        itemSys.sortingByWeight = false;
 
         if (version2)
         {
@@ -44,6 +48,9 @@ public class SortManager : MonoBehaviour
     public void SortByWeight(bool version2 = false)
     {
         StartTimer();
+
+        itemSys.sortingByWeight = true;
+
         if (version2)
         {
             Quick(ref itemSys.inventoryItemList, true);
@@ -67,7 +74,7 @@ public class SortManager : MonoBehaviour
 
             if (version2)
             {
-                SortByName(true);
+                if (itemSys.sortingByWeight) SortByName(true);
                 Binary(input, ref itemSys.inventoryItemList);
             }
             else
@@ -247,7 +254,7 @@ public class SortManager : MonoBehaviour
             // defines a middle value using provided bounds
             int mid = (min + max) / 2;
             // checks if item corresponds to middle value
-            if (list[mid].Name == input)
+            if (list[mid].Name.ToLower() == input)
             {
                 // if it does, return item
                 list.RemoveAt(mid);

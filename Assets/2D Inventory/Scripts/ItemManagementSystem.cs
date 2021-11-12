@@ -19,6 +19,7 @@ public class ItemManagementSystem : MonoBehaviour
 
     [SerializeField]
     bool version2;
+    public bool sortingByWeight = false;
 
     void Start()
     {
@@ -28,11 +29,11 @@ public class ItemManagementSystem : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 
     void DefineItems()
-	{
+    {
         fullItemList.Add(new Item("Axe", 3.0f));
         fullItemList.Add(new Item("Bandage", 0.4f));
         fullItemList.Add(new Item("Cheese Wheel", 1f));
@@ -53,17 +54,17 @@ public class ItemManagementSystem : MonoBehaviour
     }
 
     void InitialiseFullItemList()
-	{
+    {
         GameObject gameObject;
 
         for (int i = 0; i < fullItemList.Count; i++)
-		{
+        {
             gameObject = Instantiate(itemPrefab, transform);
             gameObject.transform.GetChild(0).GetComponent<Text>().text = fullItemList[i].Name;
             gameObject.transform.GetChild(1).GetComponent<Text>().text = fullItemList[i].Weight.ToString() + " lbs";
             gameObject.GetComponent<Button>().AddEventListener(i, ItemClicked);
         }
-	}
+    }
 
     public void InitialiseInventoryItemList()
     {
@@ -74,25 +75,25 @@ public class ItemManagementSystem : MonoBehaviour
         {
             gameObject = Instantiate(itemPrefab, inventoryTransform);
             gameObject.transform.GetChild(0).GetComponent<Text>().text = inventoryItemList[i].Name;
-            gameObject.transform.GetChild(1).GetComponent<Text>().text = inventoryItemList[i].Weight.ToString();
+            gameObject.transform.GetChild(1).GetComponent<Text>().text = inventoryItemList[i].Weight.ToString() + " lbs";
             gameObject.GetComponent<Button>().AddEventListener(i, InventoryItemClicked);
         }
     }
 
     public void ClearInventoryItemList()
-	{
-        foreach(Transform child in inventoryTransform)
+    {
+        foreach (Transform child in inventoryTransform)
         {
             GameObject.Destroy(child.gameObject);
         }
 
-        
+
     }
 
     void ItemClicked(int index)
-	{
-        
-        Debug.Log("Item Cicked: " + index +". " + fullItemList[index].Name + " (" + fullItemList[index].Weight + ")");
+    {
+
+        Debug.Log("Item Cicked: " + index + ". " + fullItemList[index].Name + " (" + fullItemList[index].Weight + ")");
         AddItemToInventory(index, version2);
         InitialiseInventoryItemList();
 
@@ -104,7 +105,7 @@ public class ItemManagementSystem : MonoBehaviour
     }
 
     public void AddItemToInventory(int index, bool version2)
-	{
+    {
         Item item = new Item(fullItemList[index].Name, fullItemList[index].Weight);
         if (!version2)
         {
@@ -112,7 +113,8 @@ public class ItemManagementSystem : MonoBehaviour
         }
         else
         {
-            BinaryInsert(item, ref inventoryItemList);
+            if (!sortingByWeight) BinaryInsert(item, ref inventoryItemList);
+            else BinaryInsertWeight(item, ref inventoryItemList);
         }
 
         //InitialiseInventoryItemList();
@@ -123,40 +125,112 @@ public class ItemManagementSystem : MonoBehaviour
         if (list.Count == 0)
         {
             list.Add(item);
+            return;
         }
-        else
+        if (list[list.Count - 1].Name.CompareTo(item.Name) <= 0)
         {
-            //define minimum and maximum bounds
-            int min = 0;
-            int max = list.Count - 1;
-
-            while (min <= max)
-            {
-                // defines a middle value using provided bounds
-                int mid = (min + max) / 2;
-                // checks if item corresponds to middle value
-                if (list[mid].Name == item.Name)
-                {
-                    // if it does, return item
-                    list.Insert(mid + 1, item);
-                    return;
-                    //Console.WriteLine("\n Binary Search: {0} is at index {1} \n", value, mid);
-                }
-                // if item is smaller in value than our current one
-                else if (list[mid].Name.ToLower().CompareTo(item.Name) > 0)
-                {
-                    // discard the bottom half of the array
-                    // search again
-                    max = mid - 1;
-                }
-                else
-                {
-                    // discard the top half of the array
-                    // loop back around
-                    min = mid + 1;
-                }
-            }
             list.Add(item);
+            return;
+        }
+        if (list[0].Name.CompareTo(item.Name) >= 0)
+        {
+            list.Insert(0, item);
+            return;
+        }
+
+        //define minimum and maximum bounds
+        int min = 0;
+        int max = list.Count - 1;
+
+        while (min <= max)
+        {
+            // defines a middle value using provided bounds
+            int mid = (min + max) / 2;
+            // checks if item corresponds to middle value
+            if (list[mid].Name == item.Name)
+            {
+                // if it does, insert item
+                list.Insert(mid + 1, item);
+                return;
+                //Console.WriteLine("\n Binary Search: {0} is at index {1} \n", value, mid);
+            }
+            else if (mid == max || mid == min)
+            {
+                list.Insert(mid, item);
+                return;
+            }
+            // if item is smaller in value than our current one
+            else if (list[mid].Name.ToLower().CompareTo(item.Name) > 0)
+            {
+                // discard the bottom half of the array
+                // search again
+                max = mid - 1;
+            }
+            else
+            {
+                // discard the top half of the array
+                // loop back around
+                min = mid + 1;
+            }
+
+        }
+
+
+    }
+
+    void BinaryInsertWeight(Item item, ref List<Item> list)
+    {
+        if (list.Count == 0)
+        {
+            list.Add(item);
+            return;
+        }
+        if (list[list.Count - 1].Weight.CompareTo(item.Weight) <= 0)
+        {
+            list.Add(item);
+            return;
+        }
+        if (list[0].Weight.CompareTo(item.Weight) >= 0)
+        {
+            list.Insert(0, item);
+            return;
+        }
+
+        //define minimum and maximum bounds
+        int min = 0;
+        int max = list.Count - 1;
+
+        while (min <= max)
+        {
+            // defines a middle value using provided bounds
+            int mid = (min + max) / 2;
+            // checks if item corresponds to middle value
+            if (list[mid].Weight == item.Weight)
+            {
+                // if it does, insert item
+                list.Insert(mid + 1, item);
+                return;
+                //Console.WriteLine("\n Binary Search: {0} is at index {1} \n", value, mid);
+            }
+            else if (mid == max || mid == min)
+            {
+                list.Insert(mid, item);
+                return;
+            }
+            // if item is smaller in value than our current one
+            else if (list[mid].Weight.CompareTo(item.Weight) > 0)
+            {
+                // discard the bottom half of the array
+                // search again
+                max = mid - 1;
+            }
+            else
+            {
+                // discard the top half of the array
+                // loop back around
+                min = mid + 1;
+            }
+
         }
     }
 }
