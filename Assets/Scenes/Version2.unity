@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1125,7 +1125,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 105.14349, y: -0.50076294}
+  m_AnchoredPosition: {x: 105.14349, y: -0.5007324}
   m_SizeDelta: {x: -209.71301, y: -0.070007324}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &830752778
@@ -1252,7 +1252,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 105.14349, y: -0.50076294}
+  m_AnchoredPosition: {x: 105.14349, y: -0.5007324}
   m_SizeDelta: {x: -209.71301, y: -0.070007324}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &888352422
@@ -2513,7 +2513,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 100
   m_Viewport: {fileID: 0}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 888352422}
@@ -2575,7 +2575,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -8.853, y: -225}
+  m_AnchoredPosition: {x: -8.853, y: -224.95201}
   m_SizeDelta: {x: 188.28, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1993944264
@@ -2592,6 +2592,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemPrefab: {fileID: 3546517510764703379, guid: b2831b10d0c8ec5488628e6c14ae5a54, type: 3}
   inventoryTransform: {fileID: 2029898510}
+  version2: 1
 --- !u!114 &1993944265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2787,7 +2788,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -8.853, y: -225}
+  m_AnchoredPosition: {x: -8.853, y: -224.95201}
   m_SizeDelta: {x: 188.28, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2029898511
@@ -3004,3 +3005,4 @@ MonoBehaviour:
   itemSys: {fileID: 1993944264}
   searchBox: {fileID: 1272499656}
   scrollbar: {fileID: 830752778}
+  version2: 1
