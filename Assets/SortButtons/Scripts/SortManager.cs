@@ -6,18 +6,31 @@ using UnityEngine.UI;
 public class SortManager : MonoBehaviour
 {
     [SerializeField] ItemManagementSystem itemSys;
-    [SerializeField] Text searchBox;
-    [SerializeField] Scrollbar scrollbar;
+    [SerializeField] InputField searchBox;
+
+    [SerializeField] Button nameButton;
+    [SerializeField] Button weightButton;
+
+    [SerializeField] Text version1Desc;
+    [SerializeField] Text version2Desc;
+
+    
 
     float startTime;
-    [SerializeField] bool version2;
+    bool version2;
 
-    bool sortingByWeight = false;
+    private void Start()
+    {
+        version2 = itemSys.version2;
+        if (version2) nameButton.interactable = false;
+        version1Desc.enabled = !version2;
+        version2Desc.enabled = version2;
+        
+    }
 
     void StartTimer()
     {
         startTime = Time.realtimeSinceStartup;
-        Debug.Log("Timer started");
     }
 
     void EndTimer()
@@ -26,14 +39,14 @@ public class SortManager : MonoBehaviour
         Debug.Log("Done after " + timeTaken + " seconds");
     }
 
-    public void SortByName(bool version2 = false)
+    public void SortByName(bool bypassUpdate = false)
     {
         StartTimer();
-
         itemSys.sortingByWeight = false;
-
         if (version2)
         {
+            nameButton.interactable = false;
+            weightButton.interactable = true;
             Quick(ref itemSys.inventoryItemList);
         }
         else
@@ -41,18 +54,22 @@ public class SortManager : MonoBehaviour
             Bubble(ref itemSys.inventoryItemList);
         }
 
-        itemSys.InitialiseInventoryItemList();
+        if (!bypassUpdate) 
+        { 
+            itemSys.InitialiseInventoryItemList();
+            itemSys.SetPage(1);
+        }
         EndTimer();
     }
 
-    public void SortByWeight(bool version2 = false)
+    public void SortByWeight(bool bypassUpdate = false)
     {
         StartTimer();
-
         itemSys.sortingByWeight = true;
-
         if (version2)
         {
+            nameButton.interactable = true;
+            weightButton.interactable = false;
             Quick(ref itemSys.inventoryItemList, true);
         }
         else
@@ -60,11 +77,15 @@ public class SortManager : MonoBehaviour
             Bubble(ref itemSys.inventoryItemList, true);
         }
 
-        itemSys.InitialiseInventoryItemList();
+        if (!bypassUpdate)
+        {
+            itemSys.InitialiseInventoryItemList();
+            itemSys.SetPage(1);
+        }
         EndTimer();
     }
 
-    public void SearchRemove(bool version2 = false)
+    public void SearchRemove()
     {
         StartTimer();
         string input = searchBox.text.ToLower();
@@ -74,8 +95,14 @@ public class SortManager : MonoBehaviour
 
             if (version2)
             {
-                if (itemSys.sortingByWeight) SortByName(true);
-                Binary(input, ref itemSys.inventoryItemList);
+                if (itemSys.sortingByWeight)
+                {
+                    SortByName(true);
+                    Binary(input, ref itemSys.inventoryItemList);
+                    SortByWeight();
+                }
+                
+                else Binary(input, ref itemSys.inventoryItemList);
             }
             else
             {
@@ -91,20 +118,25 @@ public class SortManager : MonoBehaviour
     public void ClearInventory()
     {
         itemSys.inventoryItemList = new List<Item>();
-        itemSys.ClearInventoryItemList();
-        scrollbar.size = 1;
+        itemSys.SetPage(1);
+        
     }
 
-    public void AddRandomItems()
+    public void AddRandomItems(int amt = 10000)
     {
         int max = itemSys.fullItemList.Count;
 
-        for (int i=0; i < 10000; i++)
+        for (int i=0; i < amt; i++)
         {
             int chosenItem = Random.Range(0, max);
-            itemSys.AddItemToInventory(chosenItem, version2);
+            itemSys.AddItemToInventory(chosenItem);
         }
 
+        if (version2)
+        {
+            if (itemSys.sortingByWeight) SortByWeight();
+            else SortByName();
+        }
         itemSys.InitialiseInventoryItemList();
     }
     static void Bubble(ref List<Item> list, bool sortByWeight = false)
@@ -187,7 +219,7 @@ public class SortManager : MonoBehaviour
             // sorts the array based on values lower than the pivot
             for (int i = low; i < high; i++)
             {
-                // only sorts if current point is smaller than the pivot 
+                // only sorts if current point is smaller than the pivot
                 if (list[i].Name.CompareTo(pivot.Name) < 0)
                 {
                     lowIndex++;
@@ -197,8 +229,6 @@ public class SortManager : MonoBehaviour
                     list[i] = temp;
                 }
             }
-
-            
         }
         else
         {
@@ -206,7 +236,18 @@ public class SortManager : MonoBehaviour
             for (int i = low; i < high; i++)
             {
                 // only sorts if current point is smaller than the pivot 
-                if (list[i].Weight < pivot.Weight)
+                if (list[i].Weight == pivot.Weight)
+                {
+                    if (list[i].Name.CompareTo(pivot.Name) < 0)
+                    {
+                        lowIndex++;
+
+                        Item temp = list[lowIndex];
+                        list[lowIndex] = list[i];
+                        list[i] = temp;
+                    }
+                }
+                else if (list[i].Weight < pivot.Weight)
                 {
                     lowIndex++;
 
@@ -252,13 +293,13 @@ public class SortManager : MonoBehaviour
         while (min <= max)
         {
             // defines a middle value using provided bounds
-            int mid = (min + max) / 2;
+            int mid = Mathf.FloorToInt((min + max) / 2);
             // checks if item corresponds to middle value
             if (list[mid].Name.ToLower() == input)
             {
-                // if it does, return item
+                // if it does, remove item
                 list.RemoveAt(mid);
-                //Console.WriteLine("\n Binary Search: {0} is at index {1} \n", value, mid);
+                max--;
             }
             // if item is smaller in value than our current one
             else if (list[mid].Name.ToLower().CompareTo(input) > 0)
@@ -273,6 +314,21 @@ public class SortManager : MonoBehaviour
                 // loop back around
                 min = mid + 1;
             }
+
         }
+    }
+
+    public void SwitchVersion()
+    {
+        itemSys.version2 = !itemSys.version2;
+        version2 = itemSys.version2;
+        ClearInventory();
+        nameButton.interactable = true;
+        weightButton.interactable = true;
+        if (version2) nameButton.interactable = false;
+        version1Desc.enabled = !version2;
+        version2Desc.enabled = version2;
+        searchBox.text = "";
+        itemSys.sortingByWeight = false;
     }
 }
