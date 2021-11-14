@@ -26,8 +26,6 @@ public class ItemManagementSystem : MonoBehaviour
     [SerializeField] Text pageCounter;
     [SerializeField] Text itemCounter;
 
-    [SerializeField] Scrollbar scroll;
-
     void Start()
     {
         DefineItems();
@@ -76,7 +74,6 @@ public class ItemManagementSystem : MonoBehaviour
             gameObject.transform.GetChild(1).GetComponent<Text>().text = fullItemList[i].Weight.ToString("f1") + " lbs";
             gameObject.GetComponent<Button>().AddEventListener(i, ItemClicked);
         }
-        scroll.value = 0f;
     }
 
     public void InitialiseInventoryItemList() //The Player Inventory
@@ -98,6 +95,7 @@ public class ItemManagementSystem : MonoBehaviour
 
         pageCounter.text = pageNumber + " / " + totalPages;
         itemCounter.text = "<b>Items</b>  " + inventoryItemList.Count;
+        if (pageNumber > totalPages) SetPage(totalPages);
     }
 
     public void SetPage(int page)
@@ -140,6 +138,7 @@ public class ItemManagementSystem : MonoBehaviour
         Debug.Log("Item Cicked: " + index + ". " + inventoryItemList[index].Name + " (" + inventoryItemList[index].Weight + ")");
         inventoryItemList.RemoveAt(index);
         InitialiseInventoryItemList();
+        
     }
 
     public void AddItemToInventory(int index)

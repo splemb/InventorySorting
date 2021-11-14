@@ -85,7 +85,7 @@ public class SortManager : MonoBehaviour
         EndTimer();
     }
 
-    public void SearchRemove()
+    public void SearchRemove(bool removeOne = false)
     {
         StartTimer();
         string input = searchBox.text.ToLower();
@@ -98,15 +98,15 @@ public class SortManager : MonoBehaviour
                 if (itemSys.sortingByWeight)
                 {
                     SortByName(true);
-                    Binary(input, ref itemSys.inventoryItemList);
+                    Binary(input, ref itemSys.inventoryItemList, removeOne);
                     SortByWeight();
                 }
                 
-                else Binary(input, ref itemSys.inventoryItemList);
+                else Binary(input, ref itemSys.inventoryItemList, removeOne);
             }
             else
             {
-                Linear(input, ref itemSys.inventoryItemList);
+                Linear(input, ref itemSys.inventoryItemList, removeOne);
             }
 
             itemSys.InitialiseInventoryItemList();
@@ -267,7 +267,7 @@ public class SortManager : MonoBehaviour
         return lowIndex + 1;
     }
 
-    void Linear(string input, ref List<Item> list)
+    void Linear(string input, ref List<Item> list, bool removeOne=false)
     {
         int n = list.Count;
 
@@ -276,15 +276,15 @@ public class SortManager : MonoBehaviour
             
             if (list[i].Name.ToLower() == input)
             {
-                //Debug.Log("  a  ");
                 list.RemoveAt(i);
+                if (removeOne) return;
                 n--;
                 i--;
             }
         }
     }
 
-    void Binary(string input, ref List<Item> list)
+    void Binary(string input, ref List<Item> list, bool removeOne = false)
     {
         //define minimum and maximum bounds
         int min = 0;
@@ -299,6 +299,7 @@ public class SortManager : MonoBehaviour
             {
                 // if it does, remove item
                 list.RemoveAt(mid);
+                if (removeOne) return;
                 max--;
             }
             // if item is smaller in value than our current one
