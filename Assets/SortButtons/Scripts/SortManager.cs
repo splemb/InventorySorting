@@ -273,13 +273,12 @@ public class SortManager : MonoBehaviour
 
         for (int i = 0; i < n; i++)
         {
-            
-            if (list[i].Name.ToLower() == input)
+            if (list[i].Name.ToLower() == input) // searches are not case sensitive
             {
                 list.RemoveAt(i);
-                if (removeOne) return;
-                n--;
-                i--;
+                if (removeOne) return; // If only set to remove one, stop searching
+                n--; // Reduce recorded size of list
+                i--; // Set counter back one
             }
         }
     }
